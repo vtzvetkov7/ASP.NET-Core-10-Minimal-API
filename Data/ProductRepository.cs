@@ -9,6 +9,13 @@ public class ProductRepository
         new Product(3,"Desk Chair",300m,"Furniture")
     ];
 
-    
-    private record Product(int Id,string Name,decimal Price,string Category);
+    public IEnumerable<Product> GetAll()
+    {
+        return _products;
+    }
+    public Product? GetById(int id)
+    {
+        return _products.FirstOrDefault(p => p.Id == id);
+    }
+    public record Product(int Id,string Name,decimal Price,string Category);
 }
