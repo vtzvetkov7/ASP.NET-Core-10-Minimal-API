@@ -11,7 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
 // Mapping section
-app.MapGet("/", () => "Product Catalog API is running");
+
+
 
 
 // Versioning section
