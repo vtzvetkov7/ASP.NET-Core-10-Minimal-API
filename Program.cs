@@ -28,8 +28,6 @@ app.UseSwaggerUI();
 
 
 // Mapping section
-app.MapGet("/", () => "Product Catalog API is running");
-
 app.MapGet("/api/products", (ProductRepository repo) =>
 {
     var products = repo.GetAll()
@@ -64,6 +62,10 @@ var v1 = app.MapGroup("/api/v{version:apiVersion}/products")
     .WithApiVersionSet(versionSet)
     .MapToApiVersion(1.0);
 
+var v2 = app.MapGroup("/api/v{version:apiVersion}/products")
+    .WithApiVersionSet(versionSet)
+    .MapToApiVersion(2.0);
+
 v1.MapGet("/", (ProductRepository repo) =>
 {
     var products = repo.GetAll()
@@ -73,6 +75,22 @@ v1.MapGet("/", (ProductRepository repo) =>
 })
 .WithName("GetProductsV1")
 .Produces<IEnumerable<ProductV1>>(200);
+
+
+v2.MapGet("/", (ProductRepository repo, string? category) =>
+{
+    var products = repo.GetAll();
+
+    if (!string.IsNullOrEmpty(category))
+        products = products.Where(p => p.Category == category);
+
+    var result = products.Select(p =>
+        new ProductV2(p.Id, p.Name, p.Price, p.Category));
+
+    return Results.Ok(result);
+})
+.WithName("GetProductsV2")
+.Produces<IEnumerable<ProductV2>>(200);
 
 
 app.Run();
